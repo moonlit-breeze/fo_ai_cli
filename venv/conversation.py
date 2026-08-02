@@ -70,7 +70,8 @@ class FoConversation:
             /save [文件名]: 保存对话到文件
             /load [文件名]: 加载文件中的对话
             /list: 列出已保存的对话
-            /model: 切换模型（chat/reasoner）""")
+            /model: 切换模型（chat/reasoner）
+            /exit: 退出 """)
             return True
 
         elif command == "/model":
@@ -80,7 +81,11 @@ class FoConversation:
             else:
                 console.print(f"[yellow]用法：/model chat 或 /model reasoner[/yellow]")
             return True
-            
+        
+        elif command == "/exit":
+            console.print("[yellow]退出 [/yellow]")
+            exit()
+
         return False
 
     def save_conversation(self, filename=None):
