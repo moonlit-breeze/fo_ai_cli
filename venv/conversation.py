@@ -105,11 +105,20 @@ class FoConversation:
             console.print(f"[red]请输入要加载的对话文件路径[/red]")
             return
 
-        with open(filepath, "r", encoding="utf-8") as f:
-            data = json.load(f)
+        if not os.path.exists(filepath):
+            console.print(f"[red]文件不存在：{filepath}[/red]")
+            return
+
+        try:
+            with open(filepath, "r", encoding="utf-8") as f:
+                data = json.load(f)
             self.model = data["model"]
             self.message = data["message"]
-        console.print(f"[green]已从 {filepath} 加载对话[/green]")
+            console.print(f"[green]已从 {filepath} 加载对话[/green]")
+        except json.JSONDecodeError:
+            console.print(f"[red]文件格式错误或为空：{filepath}[/red]")
+        except KeyError as e:
+            console.print(f"[red]文件缺少必要字段：{e}[/red]")
 
     def ask(self, question: str, max_retries=3):
         if question.startswith("/"):
