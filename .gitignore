@@ -1,0 +1,9 @@
+venv/Include/
+venv/Lib/
+venv/Scripts/
+venv/pyvenv.cfg
+__pycache__/
+*.pyc
+.env
+conversations/
+*.json
