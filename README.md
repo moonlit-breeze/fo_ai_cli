@@ -1,3 +1,5 @@
+<!-- AIGC metadata block removed for security -->
+
 # 佛学问答CLI工具
 
 一个基于DeepSeek API的佛学问答命令行工具，支持多轮对话、流式输出、对话保存/加载。
@@ -21,3 +23,4 @@ python fo_cli.py
 - `/list` - 列出已保存的对话
 - `/model chat|reasoner` - 切换模型
 - `/exit` - 退出
+*（内容由AI生成，仅供参考）*
