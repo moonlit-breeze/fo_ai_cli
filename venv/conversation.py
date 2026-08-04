@@ -4,6 +4,7 @@ import time
 from openai import OpenAI
 from rich.console import Console
 from rich.panel import Panel
+from rich.live import Live
 from config import DEEPSEEK_API_KEY, BASE_URL, DEFAULT_MODEL, SYSTEM_PROMPT
 from datetime import datetime
 
@@ -24,7 +25,18 @@ class FoConversation:
         # 初始化保存目录
         self.save_dir = "."
         self.model = "deepseek-chat"
+     
+    def add_user(self, text):
+        """添加用户消息到对话历史"""
+        self.message.append({"role": "user", "content": text})
 
+    def add_assistant(self, text):
+        """添加AI回复到对话历史"""
+        self.message.append({"role": "assistant", "content": text})
+
+    def get_messages(self):
+        """获取完整的消息列表（包含system + 历史对话）"""
+        return self.message
 
     def handle_command(self, cmd: str) -> bool:
         """处理特殊命令，返回True表示已处理（不再发给AI）"""
@@ -131,32 +143,36 @@ class FoConversation:
                 return
             
         # 1. 把用户问题加入历史
-        self.message.append({"role": "user", "content": question})
-        
+        self.add_user(question)
+
         for attempt in range(max_retries):
             try:
                 # 用Rich显示"正在思考"提示
                 console.print("[yellow]◇ 正在思考...[/yellow]")
 
-                # 2. 向AI提问，并显示回答
+                # 2. 向AI提问，流式输出在Panel内逐字显示
                 response = client.chat.completions.create(
                     model=self.model,
-                    messages=self.message,
-                    stream=True,  # 流式输出，体验更好
+                    messages=self.get_messages(),
+                    stream=True,
                     timeout=30.0
                 )
-                
-                console.print(Panel.fit("", title="[cyan]AI回答[/cyan]", border_style="cyan"))        
-                full_reply = []
-                for chunk in response:
-                    if chunk.choices[0].delta.content:
-                        content = chunk.choices[0].delta.content
-                        console.print(content, end="", highlight=False)
-                        full_reply.append(content)
-                console.print()
 
-                # 3. 把AI回复也加入历史，下次对话AI就能"记得"
-                self.message.append({"role": "assistant", "content": ''.join(full_reply)})
+                full_reply = []
+                with Live(Panel.fit("", title="[cyan]AI回答[/cyan]", border_style="cyan"),
+                          console=console, refresh_per_second=20) as live:
+                    for chunk in response:
+                        if chunk.choices[0].delta.content:
+                            content = chunk.choices[0].delta.content
+                            full_reply.append(content)
+                            live.update(Panel.fit(''.join(full_reply),
+                                                  title="[cyan]AI回答[/cyan]",
+                                                  border_style="cyan"))
+
+                reply_text = ''.join(full_reply)
+
+                # 3. 添加AI回复到历史，下次对话AI就能"记得"
+                self.add_assistant(reply_text)
                 return
 
             except Exception as e:
