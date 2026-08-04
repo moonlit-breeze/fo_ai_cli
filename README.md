@@ -23,4 +23,3 @@ python fo_cli.py
 - `/list` - 列出已保存的对话
 - `/model chat|reasoner` - 切换模型
 - `/exit` - 退出
-*（内容由AI生成，仅供参考）*
