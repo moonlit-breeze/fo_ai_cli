@@ -22,6 +22,14 @@ if __name__ == "__main__":
         if not user_input:
             continue
 
+        # 输入长度检查，成本意识
+        MAX_INPUT_LENGTH = 3000
+        if len(user_input) > MAX_INPUT_LENGTH:
+            console.print(f"[yellow]⚠️ 输入过长({len(user_input)}字符)，可能产生额外成本。是否继续？[/yellow]")
+            confirm = input("按回车继续，或输入 n 取消: ").strip().lower()
+            if confirm == "n":
+                continue
+
         # 先检查是否是命令
         if user_input.startswith("/"):
             conv.handle_command(user_input)
