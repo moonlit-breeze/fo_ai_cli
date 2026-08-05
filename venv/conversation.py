@@ -40,13 +40,11 @@ class FoConversation:
         问：不偷盗戒的范围？
         答：不偷盗戒禁止一切不与而取的行为，包括直接窃取、骗取、侵占，乃至借而不还。
         
-        注：仅供参考，以丛林规约为准
-        
         出处：《四分律》卷一
         
-        重要：出处必须单独成行，不能与注在同一行。
+        重要：出处必须单独成行，不能与其他内容在同一行。
         """
-        
+
         # messages列表：第一个永远是system，后面交替user/assistant
         self.message = [{"role": "system", "content": self.system_prompt}]
         # 初始化保存目录
